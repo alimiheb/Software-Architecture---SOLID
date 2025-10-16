@@ -1,0 +1,67 @@
+@startuml CarManager_Refactored
+!theme plain
+
+title Refactored Design - SRP Compliant with Facade Pattern
+
+class Car {
+    - id: String
+    - model: String
+    - brand: String
+    + Car(id: String, model: String, brand: String)
+    + getId(): String
+    + getModel(): String
+    + getBrand(): String
+}
+
+class CarManager {
+    - carDB: CarDB
+    - carFormat: CarFormat
+    - carSelector: CarSelector
+    + CarManager()
+    + getFromDb(carId: String): Car
+    + getCarsNames(): String
+    + getBestCar(): Car
+}
+
+class CarDB {
+    - _carsDb: List<Car>
+    + getFromDb(carId: String): Car
+    + getAllCars(): List<Car>
+}
+
+class CarFormat {
+    + getCarsNames(cars: List<Car>): String
+}
+
+class CarSelector {
+    + getBestCar(cars: List<Car>): Car
+}
+
+note right of CarManager : **Facade Pattern:**\nDelegates each responsibility\nto specialized classes\n\n• Maintains familiar interface\n• Respects SRP\n• Simplifies usage
+
+note right of CarDB : **Single Responsibility:**\nData Access & Storage
+
+note right of CarFormat : **Single Responsibility:**\nData Formatting
+
+note right of CarSelector : **Single Responsibility:**\nBusiness Logic
+
+CarManager *-- CarDB : composes
+CarManager *-- CarFormat : composes
+CarManager *-- CarSelector : composes
+
+CarDB --> Car : manages
+CarFormat --> Car : formats
+CarSelector --> Car : selects
+
+note as Benefits
+Refactored Benefits:
+• Each class has single responsibility
+• Facade maintains simple interface
+• Easy to test individually
+• Changes isolated to specific classes
+• High code reusability
+• Better maintainability
+• Backwards compatibility
+end note
+
+@enduml

@@ -1,0 +1,72 @@
+@startuml SRP_Comparison
+!theme plain
+
+title Single Responsibility Principle - Before vs After
+
+package "Original Design (SRP Violation)" {
+    class CarManager_Old {
+        - _carsDb: List<Car>
+        + getFromDb(carId: String): Car
+        + getCarsNames(): String
+        + getBestCar(): Car
+    }
+    
+    note right of CarManager_Old : **3 Responsibilities:**\n1. Database Management\n2. String Formatting\n3. Selection Algorithm\n\n**Problem:** All mixed together!
+}
+
+package "Refactored Design (SRP Compliant with Facade)" {
+    class CarManager {
+        - carDB: CarDB
+        - carFormat: CarFormat
+        - carSelector: CarSelector
+        + CarManager()
+        + getFromDb(carId: String): Car
+        + getCarsNames(): String
+        + getBestCar(): Car
+    }
+    
+    class CarDB {
+        - _carsDb: List<Car>
+        + getFromDb(carId: String): Car
+        + getAllCars(): List<Car>
+    }
+    
+    class CarFormat {
+        + getCarsNames(cars: List<Car>): String
+    }
+    
+    class CarSelector {
+        + getBestCar(cars: List<Car>): Car
+    }
+    
+    note right of CarManager : **Facade Pattern:**\nDelegates to specialized classes\n\n• Same interface\n• SRP compliant\n• Easy to use
+    note right of CarDB : **1 Responsibility:**\nDatabase Management
+    note right of CarFormat : **1 Responsibility:**\nString Formatting  
+    note right of CarSelector : **1 Responsibility:**\nSelection Algorithm
+    
+    CarManager *-- CarDB
+    CarManager *-- CarFormat
+    CarManager *-- CarSelector
+}
+
+class Car {
+    - id: String
+    - model: String
+    - brand: String
+}
+
+CarManager_Old --> Car
+CarManager --> Car
+CarDB --> Car
+CarFormat --> Car  
+CarSelector --> Car
+
+note as Transformation
+**Transformation Process:**
+1. Extract responsibilities into separate classes
+2. Keep CarManager as facade for easy usage
+3. Delegate method calls to appropriate classes
+4. Maintain same public interface
+end note
+
+@enduml

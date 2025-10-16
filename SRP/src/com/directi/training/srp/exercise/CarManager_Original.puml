@@ -1,0 +1,35 @@
+@startuml CarManager_Original
+!theme plain
+
+title Original CarManager - SRP Violation
+
+class Car {
+    - id: String
+    - model: String
+    - brand: String
+    + Car(id: String, model: String, brand: String)
+    + getId(): String
+    + getModel(): String
+    + getBrand(): String
+}
+
+class CarManager {
+    - _carsDb: List<Car>
+    + getFromDb(carId: String): Car
+    + getCarsNames(): String
+    + getBestCar(): Car
+}
+
+note right of CarManager : Violates SRP!\nHas 3 responsibilities:\n1. Data Access\n2. Data Formatting\n3. Business Logic
+
+CarManager --> Car : uses
+
+note as N1
+Original Design Problems:
+• Mixed responsibilities in one class
+• Hard to test individual functions
+• Changes to one feature affect others
+• Poor code reusability
+end note
+
+@enduml
