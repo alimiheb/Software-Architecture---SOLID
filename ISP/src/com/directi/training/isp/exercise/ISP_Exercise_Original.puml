@@ -1,0 +1,66 @@
+@startuml ISP_Exercise_Original
+title ISP Exercise - Original Design (Violates ISP)
+
+interface Door {
+    +lock()
+    +unlock()
+    +open()
+    +close()
+    +timeOutCallback()
+    +proximityCallback()
+}
+
+class TimedDoor {
+    -_locked: boolean
+    -_opened: boolean
+    +lock()
+    +unlock()
+    +open()
+    +close()
+    +timeOutCallback()
+    +proximityCallback() {throws NotImplementedException}
+}
+
+class SensingDoor {
+    -_locked: boolean
+    -_opened: boolean
+    +lock()
+    +unlock()
+    +open()
+    +close()
+    +timeOutCallback() {throws NotImplementedException}
+    +proximityCallback()
+}
+
+class Timer {
+    +register(timeOut: long, door: Door)
+}
+
+class Sensor {
+    +register(door: Door)
+    -isPersonClose(): boolean
+}
+
+Door <|.. TimedDoor
+Door <|.. SensingDoor
+Timer ..> Door : depends on
+Sensor ..> Door : depends on
+
+note right of TimedDoor
+  TimedDoor is forced to implement
+  proximityCallback() which it doesn't need.
+  This violates ISP!
+end note
+
+note right of SensingDoor
+  SensingDoor is forced to implement
+  timeOutCallback() which it doesn't need.
+  This violates ISP!
+end note
+
+note top of Door
+  Fat interface - contains methods
+  that not all implementers need
+end note
+
+@enduml

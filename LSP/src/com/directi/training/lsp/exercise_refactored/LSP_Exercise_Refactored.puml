@@ -1,0 +1,63 @@
+@startuml LSP_Exercise_Refactored
+title LSP Exercise - Refactored Design (Follows LSP)
+
+interface IDuck {
+    +void quack()
+    +void swim()
+}
+
+class Duck implements IDuck {
+    +void quack()
+    +void swim()
+}
+
+class ElectronicDuck implements IDuck {
+    -boolean _on
+    +void quack()
+    +void swim()
+    +void turnOn()
+    +void turnOff()
+}
+
+class Pool {
+    +void run()
+    -void quack(IDuck... ducks)
+    -void swim(IDuck... ducks)
+    +static void main(String[] args)
+}
+
+IDuck <|.. Duck
+IDuck <|.. ElectronicDuck
+Pool ..> IDuck : uses
+
+note right of ElectronicDuck
+  ElectronicDuck implements IDuck
+  (not extends Duck).
+  
+  When off, it prints "..." instead
+  of throwing exceptions.
+  
+  ✓ Follows LSP!
+  
+  Can be substituted for IDuck
+  without breaking the program.
+end note
+
+note top of IDuck
+  Interface defines contract:
+  All ducks must be able to
+  quack() and swim()
+end note
+
+note bottom of Pool
+  Pool depends on IDuck interface.
+  All implementations work correctly
+  without exceptions!
+end note
+
+note left of Duck
+  Regular duck - simple implementation
+  Always quacks and swims
+end note
+
+@enduml

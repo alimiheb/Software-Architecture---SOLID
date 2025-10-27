@@ -1,0 +1,49 @@
+@startuml LSP_Exercise_Original
+title LSP Exercise - Original Design (Violates LSP)
+
+class Duck {
+    +void quack()
+    +void swim()
+}
+
+class ElectronicDuck extends Duck {
+    -boolean _on
+    +void quack()
+    +void swim()
+    +void turnOn()
+    +void turnOff()
+}
+
+class Pool {
+    +void run()
+    -void quack(Duck... ducks)
+    -void swim(Duck... ducks)
+    +static void main(String[] args)
+}
+
+Duck <|-- ElectronicDuck
+Pool ..> Duck : uses
+
+note right of ElectronicDuck
+  ElectronicDuck extends Duck but
+  throws RuntimeException when off.
+  
+  This VIOLATES LSP!
+  
+  The subclass (ElectronicDuck) cannot
+  be substituted for the base class (Duck)
+  without breaking the program.
+end note
+
+note top of Duck
+  Base class - works unconditionally
+  quack() and swim() always succeed
+end note
+
+note bottom of Pool
+  Pool expects all Ducks to work the same way.
+  ElectronicDuck breaks this expectation
+  when it's turned off → RuntimeException!
+end note
+
+@enduml

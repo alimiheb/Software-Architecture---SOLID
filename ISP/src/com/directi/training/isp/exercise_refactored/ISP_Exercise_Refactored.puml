@@ -1,0 +1,69 @@
+@startuml name
+
+package com.directi.training.isp.exercise {
+
+    interface Lockable {
+        + void lock()
+        + void unlock()
+    }
+
+    interface Openable {
+        + void open()
+        + void close()
+    }
+
+    interface TimeOutNotifiable {
+        + void timeOutCallback()
+    }
+
+    interface ProximityNotifiable {
+        + void proximityCallback()
+    }
+
+    class SensingDoor implements Lockable, Openable, ProximityNotifiable {
+        - boolean _locked
+        - boolean _opened
+        + SensingDoor(Sensor sensor)
+        + void lock()
+        + void unlock()
+        + void open()
+        + void close()
+        + void proximityCallback()
+    }
+
+    class TimedDoor implements Lockable, Openable, TimeOutNotifiable {
+        - boolean _locked
+        - boolean _opened
+        - static final int TIME_OUT
+        + TimedDoor(Timer timer)
+        + void lock()
+        + void unlock()
+        + void open()
+        + void close()
+        + void timeOutCallback()
+    }
+
+    class Sensor {
+        + void register(ProximityNotifiable door)
+        - boolean isPersonClose()
+    }
+
+    class Timer {
+        + void register(long timeOut, TimeOutNotifiable door)
+    }
+
+    Lockable <|.. SensingDoor
+    Lockable <|.. TimedDoor
+    Openable <|.. SensingDoor
+    Openable <|.. TimedDoor
+    ProximityNotifiable <|.. SensingDoor
+    TimeOutNotifiable <|.. TimedDoor
+
+    SensingDoor --> Sensor : "register"
+    TimedDoor --> Timer : "register"
+    Timer --> TimeOutNotifiable : "timeOutCallback"
+    Sensor --> ProximityNotifiable : "proximityCallback"
+
+}
+
+@enduml
